@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AED Trainer — Practice CPR &amp; Defibrillator Use</title>
+<meta name="description" content="A free interactive simulator that mimics a public-access defibrillator (AED) so anyone can practise CPR and learn how an AED talks you through saving a life. Training use only." />
+<meta name="theme-color" content="#12181a" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="AED Trainer" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="brand">
+    <img src="icons/icon-192.png" alt="" width="28" height="28" class="brand-mark" />
+    <span class="brand-name">AED Trainer</span>
+  </div>
+</header>
+
+<div class="disclaimer-bar" role="note">
+  <strong>Training simulator only.</strong> Not a real defibrillator. Follows adult Basic Life Support guidance — suitable for adults and for children old enough and large enough to be managed on the adult sequence. Always call 999/112 and follow real AED voice prompts in an emergency.
+</div>
+
+<main id="main">
+
+  <!-- ============ HOME SCREEN ============ -->
+  <section id="screen-home" class="screen screen-home" aria-hidden="false">
+    <p class="home-eyebrow">ADULT BASIC LIFE SUPPORT</p>
+   <h1 class="page-title">CPR + AED practice</h1>
+    <p class="lede">
+  Practise the first actions for an unresponsive adult who is not breathing normally.
+  Follow the prompts and use the AED as soon as it arrives.
+</p>
+
+<button id="btn-start" class="btn btn-primary btn-lg home-start-button" data-testid="button-start-training">
+  START A RESCUE
+</button>
+    <div class="home-grid">
+      <div class="home-card">
+        <h2 class="card-title">How it works</h2>
+        <ol class="steps-list">
+  <li>Check that it is safe and check for a response</li>
+  <li>If the person is unresponsive, call 999 immediately</li>
+  <li>While the call connects, check whether they are breathing normally</li>
+  <li>If breathing is abnormal, absent or you are unsure, start CPR</li>
+  <li>When the AED arrives, switch it on and follow its voice prompts</li>
+  <li>Attach the pads where shown, stand clear for analysis, then restart CPR immediately</li>
+</ol>
+      </div>
+
+      <div class="home-card">
+        <h2 class="card-title">AED outcome</h2>
+<p class="card-hint">Choose what the AED will advise during rhythm analysis.</p>
+        <fieldset class="scenario-picker">
+          <legend class="sr-only">Choose a training scenario</legend>
+          <label class="radio-row">
+            <input type="radio" name="scenario" value="random" checked />
+            <span>Random <em>(most realistic)</em></span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="scenario" value="shockable" />
+            <span>Always shockable rhythm</span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="scenario" value="noshock" />
+            <span>Always no shock advised</span>
+          </label>
+        </fieldset>
+      </div>
+
+      <div class="home-card home-card-wide">
+        <h2 class="card-title">Rescuer mode</h2>
+<p class="card-hint">Choose continuous compressions or adult 30:2 CPR with a second rescuer.</p>
+        <fieldset class="scenario-picker">
+          <legend class="sr-only">Choose number of rescuers</legend>
+          <label class="radio-row">
+            <input type="radio" name="rescuers" value="single" checked data-testid="radio-rescuers-single" />
+            <span>Single rescuer <em>(continuous compressions)</em></span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="rescuers" value="two" data-testid="radio-rescuers-two" />
+            <span>Two rescuers <em>(adult 30 compressions : 2 breaths)</em></span>
+          </label>
+        </fieldset>
+      </div>
+    </div>
+
+    <p class="voice-hint" id="voice-support-hint"></p>
+  </section>
+  <!-- ============ 60-SECOND RESCUE INTRO ============ -->
+  <section id="screen-intro" class="screen screen-intro" aria-hidden="true">
+    <button id="btn-intro-exit" class="btn btn-ghost btn-exit" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      Back
+    </button>
+
+    <div class="intro-card">
+      <p id="intro-step" class="intro-step">60-SECOND RESCUE · STEP 1 OF 4</p>
+
+      <div class="intro-icon" aria-hidden="true">!</div>
+
+      <h1 id="intro-title" class="intro-title">Is it safe to approach?</h1>
+
+      <p id="intro-message" class="intro-message">
+        An adult has suddenly collapsed. Look around before you go closer.
+      </p>
+
+      <div id="intro-actions" class="intro-actions">
+        <button id="btn-intro-primary" class="btn btn-primary btn-lg" type="button">
+          YES — CHECK FOR A RESPONSE
+        </button>
+
+        <button id="btn-intro-secondary" class="btn btn-secondary btn-lg" type="button">
+          NO — GET HELP / STAY SAFE
+        </button>
+      </div>
+
+      <button id="btn-intro-repeat" class="btn btn-ghost intro-repeat" type="button">
+        🔊 Hear that again
+      </button>
+
+      <p class="intro-safety-note">
+        Training practice only. In a real emergency, call 999/112 and follow the ambulance call handler’s instructions.
+      </p>
+    </div>
+  </section>
+  <!-- ============ DEVICE SCREEN ============ -->
+  <section id="screen-device" class="screen screen-device" aria-hidden="true">
+
+    <button id="btn-exit" class="btn btn-ghost btn-exit" data-testid="button-exit">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      End session
+    </button>
+
+    <div class="device" id="aed-device" data-testid="device-shell">
+
+<div class="device-brandrow">
+
+    <div class="device-brand-block">
+
+        <div class="device-brand-label">
+            AED TRAINER
+        </div>
+
+<div class="device-model">
+  KJT SERIES · FIELD 100
+</div>
+
+    </div>
+
+    <div class="device-lights" role="status" aria-live="off">
+
+        <span class="light" id="light-power">
+            <i></i>Power
+        </span>
+
+        <span class="light" id="light-shock">
+            <i></i>Shock
+        </span>
+
+        <span class="light" id="light-cpr">
+            <i></i>CPR
+        </span>
+
+    </div>
+
+</div>
+
+<div class="device-instructions" aria-label="Training device notice">
+  TRAINING DEVICE <span aria-hidden="true">·</span> FOLLOW VOICE PROMPTS
+</div>
+
+      <div class="device-screen" id="device-screen" aria-live="polite">
+<div id="voice-indicator" class="voice-indicator">
+    🔊 VOICE PROMPT ACTIVE
+</div>
+        <!-- OFF state -->
+        <div class="panel" id="panel-off" data-panel="off">
+          <p class="panel-off-label" id="panel-off-label">Device is off</p>
+        </div>
+
+        <!-- POWER ON -->
+        <div class="panel" id="panel-poweron" data-panel="poweron" hidden>
+          <p class="status-code" id="poweron-status-code">AED ON</p>
+          <p class="caption-text" id="caption-poweron">Continue CPR while the AED sets up.</p>
+        </div>
+
+        <!-- PADS -->
+        <div class="panel panel-pads" id="panel-pads" data-panel="pads" hidden>
+          <p class="status-code">ATTACH PADS</p>
+          <div class="pad-placement-container">
+            <img src="images/adult-chest.png" alt="Adult chest showing pad 1 placed below the right collarbone and pad 2 on the mid-axillary line under the left armpit" class="chest-photo">
+            <span class="aed-pad pad-a" aria-hidden="true">1</span>
+            <span class="aed-pad pad-b" aria-hidden="true">2</span>
+          </div>
+          <p class="caption-text" id="caption-pads">Bare the chest. Peel the backing and press pad 1 below the right collarbone, pad 2 under the left armpit.</p>
+          <button id="btn-pads-done" class="btn btn-accent" data-testid="button-pads-attached">Pads attached</button>
+        </div>
+                <!-- STAND CLEAR CHALLENGE -->
+        <div class="panel panel-clear" id="panel-clear" data-panel="clear" hidden>
+          <p class="status-code status-code-warn">AED READY TO ANALYSE</p>
+
+          <div class="clear-symbol" aria-hidden="true">✋</div>
+
+          <p class="clear-title">STAND CLEAR</p>
+
+          <p class="caption-text">
+            Nobody should touch the person while the AED checks the heart rhythm.
+          </p>
+
+          <p class="clear-question">What do you say?</p>
+
+          <div class="clear-actions">
+            <button id="btn-clear-correct" class="btn btn-accent" type="button">
+              STAND CLEAR!
+            </button>
+
+            <button id="btn-clear-continue" class="btn btn-secondary" type="button">
+              KEEP PRESSING!
+            </button>
+
+            <button id="btn-clear-pads" class="btn btn-secondary" type="button">
+              TAKE THE PADS OFF!
+            </button>
+          </div>
+
+          <p id="clear-feedback" class="clear-feedback" aria-live="polite"></p>
+        </div>
+        <!-- ANALYSING -->
+        <div class="panel panel-analysing" id="panel-analysing" data-panel="analysing" hidden>
+          <p class="status-code status-code-warn">ANALYSING RHYTHM</p>
+         <div class="analysis-ring">
+    <div class="ring-spinner"></div>
+</div>
+          <p class="caption-text" id="caption-analysing">Do not touch the patient. Analysing now.</p>
+        </div>
+
+        <!-- SHOCK ADVISED / CHARGING -->
+        <div class="panel panel-shock" id="panel-shock" data-panel="shock" hidden>
+<div class="warning-triangle" aria-hidden="true">⚠️</div>
+          <p class="status-code status-code-alert" id="shock-status-code">SHOCK ADVISED</p>
+          <div class="charge-bar" id="charge-bar" aria-hidden="true"><span></span></div>
+          <p class="caption-text" id="caption-shock">Charging. Stand clear of the patient.</p>
+          <button id="btn-shock" class="shock-button" disabled data-testid="button-deliver-shock">
+            <span class="shock-button-label">SHOCK</span>
+          </button>
+        </div>
+
+        <!-- NO SHOCK -->
+        <div class="panel" id="panel-noshock" data-panel="noshock" hidden>
+          <p class="status-code status-code-safe">NO SHOCK ADVISED</p>
+          <p class="caption-text" id="caption-noshock">No shock advised. Continue CPR immediately.</p>
+        </div>
+                <!-- AMBULANCE CREW ARRIVED -->
+        <div class="panel panel-handover" id="panel-handover" data-panel="handover" hidden>
+          <p class="status-code status-code-safe">AMBULANCE CREW HAS TAKEN OVER</p>
+
+<div class="handover-symbol" aria-hidden="true">✓</div>
+
+<p class="handover-title">SCENARIO COMPLETE</p>
+
+<p class="caption-text">
+  The crew has taken over CPR.
+</p>
+
+<button
+  id="btn-main-menu"
+  class="btn btn-accent"
+  type="button"
+>
+  MAIN MENU
+</button>
+        </div>
+   <!-- CPR -->
+        <div class="panel panel-cpr" id="panel-cpr" data-panel="cpr" hidden>
+          <p class="status-code" id="cpr-status-code">CPR IN PROGRESS</p>
+
+
+          <div class="cpr-compressions-view" id="cpr-compressions-view">
+            <div class="cpr-visual" aria-hidden="true">
+              <div class="metronome-ring" id="metronome-ring">
+                  <div class="metronome-core"></div>
+              </div>
+              <div
+  class="chest-animation"
+  id="chest-animation"
+  aria-label="Compression rhythm indicator"
+></div>
+            </div>
+            <div class="cpr-readout">
+              <div class="readout-block">
+                <span class="readout-value" id="cpr-count">0</span>
+                <span class="readout-label" id="cpr-count-label">compressions</span>
+              </div>
+              <div class="readout-block">
+                <span class="readout-value" id="cpr-timer">2:00</span>
+                <span class="readout-label" id="cpr-timer-label">until AED arrives</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BREATHS (two-rescuer 30:2 mode only) -->
+          <div class="breaths-phase" id="breaths-phase" hidden aria-hidden="true">
+            <div class="breaths-icon" aria-hidden="true">💨</div>
+            <div class="breaths-countdown" id="breaths-countdown">2</div>
+            <p class="breaths-label">rescue breaths</p>
+          </div>
+
+          <p class="caption-text" id="caption-cpr">Push hard and fast in the centre of the chest, to the beat.</p>
+        </div>
+
+      </div>
+
+      <div class="device-controls">
+        <button id="btn-power" class="power-button" data-testid="button-power">
+          <svg width="30"
+     height="30"
+     viewBox="0 0 24 24"
+     fill="none"
+     stroke="currentColor"
+     stroke-width="2.2"
+     style="display:block;">
+            <path d="M12 2v8"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>
+        </button>
+        <div class="controls-hint" id="controls-hint">Press to turn on</div>
+      </div>
+    </div>
+
+    <div class="caption-bar" id="caption-bar" role="log" aria-live="polite">
+      <p id="caption-bar-text">Press the power button to begin.</p>
+    </div>
+  </section>
+
+  <!-- ============ SUMMARY / RESTART ============ -->
+  <section id="screen-end" class="screen screen-end" aria-hidden="true">
+    <h1 class="page-title">Session ended</h1>
+    <p class="lede" id="end-summary">You practised the full AED sequence. Great work — the more familiar this feels, the more useful you'll be in a real emergency.</p>
+    <button id="btn-restart" class="btn btn-primary btn-lg" data-testid="button-restart">Train again</button>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>For real emergencies in the UK, always call <strong>999</strong>. This tool follows the general public‑access AED sequence described by the <a href="https://www.resus.org.uk/" target="_blank" rel="noopener">Resuscitation Council UK</a> guidelines and is for familiarisation and practice only — it is not a substitute for an accredited CPR/AED course.</p>
+</footer>
+
+<script src="js/app.js" defer></script>
+<script data-pplx-inline-edit>
+(function () {
+  if (window === window.top) return;
+
+  const allowedParentOrigins = ["https://www.perplexity.ai","https://perplexity.ai","https://testing.perplexity.ai","https://staging.perplexity.ai","https://*.preview.i.perplexity.ai","http://localhost:3000","http://127.0.0.1:3000","http://localhost:5173","http://127.0.0.1:5173"];
+  const MAX_FONT_BYTES = 500 * 1024;
+  const MAX_TOTAL_FONT_BYTES = 2 * 1024 * 1024;
+  let scrollForwarding = false;
+  let scrollRaf = 0;
+  let trustedTopOrigin = null;
+
+  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
+  // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
+  // across multiple labels.
+  function matchesAllowedOrigin(origin) {
+    if (!origin) return false;
+    for (const entry of allowedParentOrigins) {
+      if (!entry.includes("*")) {
+        if (entry === origin) return true;
+        continue;
+      }
+      const pattern = new RegExp(
+        "^" +
+          entry.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^.]+") +
+          "$",
+      );
+      if (pattern.test(origin)) return true;
+    }
+    return false;
+  }
+
+  // Trust decision: when the sender is same-origin-visible (event.origin is a
+  // real origin like https://www.perplexity.ai) we trust event.origin directly.
+  // When event.origin is "null" (opaque broker srcdoc), we fall back to the
+  // broker's stamped `parentOrigin` to identify the top window. The fallback
+  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
+  // on the response path (see postToTrustedTop) to ensure replies can't be
+  // delivered to anyone but the actual top window of that claimed origin.
+  function getTrustedParentOrigin(event) {
+    const forwardedParentOrigin =
+      typeof event.data.parentOrigin === "string" ? event.data.parentOrigin : null;
+    const parentOrigin = event.origin === "null" ? forwardedParentOrigin : event.origin;
+    return matchesAllowedOrigin(parentOrigin) ? parentOrigin : null;
+  }
+
+  // All responses go to window.top with targetOrigin = the allowlisted origin.
+  // An attacker that iframes us inside their own null-origin broker can claim
+  // any parentOrigin they like, but the browser will drop the reply whenever
+  // the real top's origin doesn't match — so the screenshot never leaves.
+  function postToTrustedTop(message) {
+    if (!trustedTopOrigin) return;
+    try {
+      window.top.postMessage(message, trustedTopOrigin);
+    } catch (_error) {}
+  }
+
+  function inlineAll(original, clone) {
+    if (original.nodeType !== 1 || clone.nodeType !== 1) return;
+
+    try {
+      const computedStyle = getComputedStyle(original);
+      // cssText on a computed style is the serialized declaration in modern
+      // Chromium/Safari — a single read beats enumerating ~400 longhand
+      // properties. Firefox returns "" here, so we fall back on empty.
+      const serialized = computedStyle.cssText;
+      if (serialized) {
+        clone.style.cssText = serialized;
+      } else {
+        const parts = new Array(computedStyle.length);
+        for (let index = 0; index < computedStyle.length; index += 1) {
+          const property = computedStyle[index];
+          parts[index] = `${property}:${computedStyle.getPropertyValue(property)};`;
+        }
+        clone.style.cssText = parts.join("");
+      }
+    } catch (_error) {}
+
+    const originalChildren = original.children;
+    const clonedChildren = clone.children;
+    for (
+      let index = 0;
+      index < originalChildren.length && index < clonedChildren.length;
+      index += 1
+    ) {
+      inlineAll(originalChildren[index], clonedChildren[index]);
+    }
+  }
+
+  function extractFontUrl(srcValue) {
+    const matches = [
+      ...srcValue.matchAll(
+        /url\(["']?([^"')]+)["']?\)(?:\s*format\(["']?([^"')]+)["']?\))?/gi,
+      ),
+    ];
+    if (matches.length === 0) return null;
+    const woff2 = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff2"));
+    if (woff2) return woff2[1];
+    const woff = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff"));
+    if (woff) return woff[1];
+    return matches[0][1];
+  }
+
+  // Cache resolved font URL -> data URI across captures. Fonts on a page
+  // essentially never change, and a batch run emits multiple captures back to
+  // back — without this we'd refetch + re-base64 every time.
+  const fontDataUriCache = new Map();
+  const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
+
+  async function fetchAsDataUri(url) {
+    if (fontDataUriCache.has(url)) return fontDataUriCache.get(url);
+    let dataUri = null;
+    try {
+      const response = await fetch(url, { mode: "cors", credentials: "omit" });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.size <= MAX_FONT_BYTES) {
+          dataUri = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve(typeof reader.result === "string" ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          });
+        }
+      }
+    } catch (_error) {
+      dataUri = null;
+    }
+    fontDataUriCache.set(url, dataUri);
+    return dataUri;
+  }
+
+  function collectFontFaceRuleTexts() {
+    const rules = [];
+    for (const sheet of document.styleSheets) {
+      let cssRules;
+      try {
+        cssRules = sheet.cssRules;
+      } catch (_error) {
+        continue;
+      }
+      if (!cssRules) continue;
+      for (const rule of cssRules) {
+        const cssText = rule.cssText || "";
+        if (cssText.startsWith("@font-face")) rules.push(cssText);
+      }
+    }
+    return rules;
+  }
+
+  async function buildInlinedFontCss() {
+    const ruleTexts = collectFontFaceRuleTexts();
+    if (ruleTexts.length === 0) return null;
+
+    const resolved = ruleTexts.map((cssText) => {
+      if (!SRC_DECLARATION_RE.test(cssText)) return null;
+      const srcMatch = cssText.match(/src\s*:\s*([^;}]+)[;}]/i);
+      if (!srcMatch) return null;
+      const url = extractFontUrl(srcMatch[1]);
+      if (!url) return null;
+      try {
+        return { cssText, url: new URL(url, document.baseURI).href };
+      } catch (_error) {
+        return null;
+      }
+    });
+
+    const dataUris = await Promise.all(
+      resolved.map((entry) => (entry ? fetchAsDataUri(entry.url) : Promise.resolve(null))),
+    );
+
+    const inlined = [];
+    let totalBytes = 0;
+    for (let index = 0; index < resolved.length; index += 1) {
+      const entry = resolved[index];
+      const dataUri = dataUris[index];
+      if (!entry || !dataUri) continue;
+      const approxBytes = dataUri.length * 0.75;
+      if (totalBytes + approxBytes > MAX_TOTAL_FONT_BYTES) break;
+      totalBytes += approxBytes;
+      inlined.push(entry.cssText.replace(SRC_DECLARATION_RE, `src: url("${dataUri}")`));
+    }
+    return inlined.length > 0 ? inlined.join("\n") : null;
+  }
+
+  function stripExternal(clone) {
+    const images = clone.querySelectorAll("img");
+    for (let index = 0; index < images.length; index += 1) {
+      const src = images[index].getAttribute("src");
+      if (src && !src.startsWith("data:")) images[index].removeAttribute("src");
+    }
+
+    const elements = clone.querySelectorAll("*");
+    for (let index = 0; index < elements.length; index += 1) {
+      const style = elements[index].style.cssText;
+      if (style && style.includes("url(")) {
+        elements[index].style.cssText = style.replace(
+          /url\(["']?(?!data:)[^)"']*["']?\)/gi,
+          "none",
+        );
+      }
+    }
+  }
+
+  function emitScroll() {
+    scrollRaf = 0;
+    if (!scrollForwarding) return;
+    postToTrustedTop({
+      type: "INLINE_EDIT_SCROLL",
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+    });
+  }
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!scrollForwarding || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(emitScroll);
+    },
+    { passive: true, capture: true },
+  );
+
+  async function handleCaptureRequest(event) {
+    const requestId = event.data.requestId;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    function postResult(dataUrl) {
+      postToTrustedTop({
+        type: "INLINE_EDIT_SCREENSHOT_RESULT",
+        requestId,
+        dataUrl,
+        scrollX,
+        scrollY,
+      });
+    }
+
+    try {
+      // Wait for any pending web fonts to resolve so both inline metrics and
+      // the @font-face inlining below see the same loaded faces.
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (_error) {}
+      }
+
+      const clone = document.documentElement.cloneNode(true);
+      inlineAll(document.documentElement, clone);
+
+      const removedNodes = clone.querySelectorAll("script,link[rel=\"stylesheet\"],style");
+      for (let index = 0; index < removedNodes.length; index += 1) {
+        removedNodes[index].remove();
+      }
+
+      stripExternal(clone);
+
+      // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
+      // can resolve them — external font URLs aren't fetched during
+      // foreignObject rendering, which would otherwise force a fallback face
+      // and change text metrics.
+      const inlinedFontCss = await buildInlinedFontCss();
+      if (inlinedFontCss) {
+        const styleEl = document.createElement("style");
+        styleEl.textContent = inlinedFontCss;
+        const head = clone.querySelector("head");
+        if (head) head.appendChild(styleEl);
+        else clone.insertBefore(styleEl, clone.firstChild);
+      }
+
+      const html = new XMLSerializer().serializeToString(clone);
+      const svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+        '<foreignObject width="100%" height="100%">' +
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">` +
+        `<div style="position:relative;left:-${scrollX}px;top:-${scrollY}px">` +
+        html +
+        "</div></div></foreignObject></svg>";
+      const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      const image = new Image();
+      image.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        postResult(canvas.toDataURL("image/png"));
+      };
+      image.onerror = function () {
+        postResult(null);
+      };
+      image.src = svgUrl;
+    } catch (_error) {
+      postResult(null);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data) return;
+    // Only accept messages from the direct parent frame. Blocks sibling /
+    // unrelated-window postMessage senders that could otherwise reach us.
+    if (event.source !== window.parent) return;
+
+    const trustedParentOrigin = getTrustedParentOrigin(event);
+    if (!trustedParentOrigin) return;
+    trustedTopOrigin = trustedParentOrigin;
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_START") {
+      scrollForwarding = true;
+      emitScroll();
+      return;
+    }
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_STOP") {
+      scrollForwarding = false;
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+      return;
+    }
+
+    if (event.data.type !== "INLINE_EDIT_CAPTURE_REQUEST") return;
+
+    handleCaptureRequest(event);
+  });
+})();
+
+
+</script></body>
+</html>
