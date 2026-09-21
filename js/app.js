@@ -33,7 +33,9 @@
     captionBarText.textContent = text;
     if (!speechSupported) return;
     function queue() {
-      const utter = new SpeechSynthesisUtterance(text);
+     const utter = new SpeechSynthesisUtterance(
+  text.replace(/\b999\b/g, "nine nine nine")
+);
       if (preferredVoice) utter.voice = preferredVoice;
       utter.rate = 0.98;
       utter.pitch = 1;
