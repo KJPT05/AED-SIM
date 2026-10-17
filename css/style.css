@@ -2010,3 +2010,84 @@ main { flex: 1; width: 100%; }
   left: auto;
   display: flex;
 }
+
+/* =========================================================
+   Family CPR Challenge
+   ========================================================= */
+.challenge-card {
+  width: min(100%, 560px);
+  margin: 0 0 28px;
+  padding: 18px 18px 16px;
+  border: 1px solid rgba(120, 229, 165, 0.35);
+  border-radius: 16px;
+  background: rgba(20, 38, 30, 0.85);
+}
+.challenge-eyebrow {
+  margin: 0 0 6px;
+  color: #78e5a5;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+.challenge-title {
+  margin: 0 0 12px;
+  color: #effff4;
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+.challenge-count { margin: 0 0 10px; color: #b4c2bc; font-size: 0.95rem; }
+.challenge-total {
+  color: #ffd16a;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  vertical-align: -2px;
+}
+.challenge-bar {
+  height: 10px;
+  margin: 0 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.challenge-bar span {
+  display: block;
+  width: 0;
+  height: 100%;
+  min-width: 4px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #78e5a5, #ffd16a);
+  transition: width 600ms ease;
+}
+.challenge-meta { margin: 0; color: #96a39e; font-size: 0.85rem; }
+.challenge-entry .challenge-count { margin-top: 2px; }
+.challenge-form { display: grid; gap: 12px; margin-top: 4px; }
+.challenge-form[hidden] { display: none; }
+.stepper {
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.stepper-btn {
+  height: 52px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text);
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.stepper-btn:active { background: rgba(255, 255, 255, 0.14); }
+.stepper-value {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.screen-end .challenge-form .btn { margin-top: 0; }
+@media (prefers-reduced-motion: reduce) { .challenge-bar span { transition: none; } }

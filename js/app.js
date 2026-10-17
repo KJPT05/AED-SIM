@@ -449,6 +449,7 @@ function renderIntroStep() {
       endTimeEl.hidden = true;
     }
     document.getElementById('share-feedback').textContent = '';
+    prepareChallengeEntry();
     showScreen('end');
   }
 
@@ -528,6 +529,126 @@ function renderIntroStep() {
     document.body.appendChild(a);
     a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
+
+  /* ---------- Family CPR Challenge (running total stored in Supabase) ---------- */
+  // The publishable key is designed to be public. The database only allows two
+  // actions: read the overall total, and add an entry of 1-10 people.
+  const CHALLENGE_API = 'https://xitozreeepukutoyhpsg.supabase.co/rest/v1/rpc/';
+  const CHALLENGE_KEY = 'sb_publishable_J_sh-cjwm7BYJ4FnDnBoQg_CFimhMYq';
+  const CHALLENGE_TARGET = 500;
+  const CHALLENGE_DEADLINE = new Date('2027-10-17T00:00:00+01:00'); // end of 16 Oct 2027, UK time
+  const CHALLENGE_GAP_MS = 60 * 60 * 1000; // one entry per phone per hour
+  const challengeFeedbackEl = document.getElementById('challenge-feedback');
+  const challengeFormEl = document.getElementById('challenge-form');
+  const peopleCountEl = document.getElementById('people-count');
+  const btnChallengeSubmit = document.getElementById('btn-challenge-submit');
+  let peopleCount = 1;
+
+  function store(key, value) {
+    try {
+      if (value === undefined) return window.localStorage.getItem(key);
+      window.localStorage.setItem(key, String(value));
+    } catch (e) { /* storage unavailable — carry on without it */ }
+    return null;
+  }
+
+  function challengeClosed() { return Date.now() >= CHALLENGE_DEADLINE.getTime(); }
+
+  function renderChallenge(total) {
+    const hasTotal = typeof total === 'number' && total >= 0;
+    document.querySelectorAll('[data-challenge-total]').forEach((el) => {
+      el.textContent = hasTotal ? total.toLocaleString('en-GB') : '–';
+    });
+    const pct = hasTotal ? Math.min(100, (total / CHALLENGE_TARGET) * 100) : 0;
+    document.querySelectorAll('[data-challenge-bar]').forEach((el) => {
+      el.setAttribute('aria-valuenow', String(hasTotal ? Math.min(total, CHALLENGE_TARGET) : 0));
+      el.querySelector('span').style.width = pct + '%';
+    });
+    const daysEl = document.querySelector('[data-challenge-days]');
+    if (daysEl) {
+      if (challengeClosed()) {
+        daysEl.textContent = 'The challenge closed on Restart a Heart Day, 16 October 2027.';
+      } else {
+        const days = Math.ceil((CHALLENGE_DEADLINE.getTime() - Date.now()) / 86400000);
+        daysEl.textContent = days + (days === 1 ? ' day' : ' days') + ' to go · Deadline 16 October 2027';
+      }
+    }
+    if (hasTotal && total >= CHALLENGE_TARGET) {
+      document.querySelectorAll('.challenge-of').forEach((el) => { el.textContent = 'taught — target reached'; });
+    }
+  }
+
+  async function challengeCall(fn, body) {
+    const res = await fetch(CHALLENGE_API + fn, {
+      method: 'POST',
+      headers: { apikey: CHALLENGE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {}),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error((data && data.message) || 'Request failed');
+    return data;
+  }
+
+  async function refreshChallenge() {
+    const cached = Number(store('aedChallengeTotal'));
+    if (cached >= 0 && store('aedChallengeTotal') !== null) renderChallenge(cached);
+    else renderChallenge(null);
+    try {
+      const data = await challengeCall('challenge_total');
+      store('aedChallengeTotal', data.total);
+      renderChallenge(data.total);
+    } catch (e) { /* offline — keep the last known total */ }
+  }
+
+  function setPeople(n) {
+    peopleCount = Math.max(1, Math.min(10, n));
+    peopleCountEl.textContent = String(peopleCount);
+  }
+  document.getElementById('btn-people-minus').addEventListener('click', () => setPeople(peopleCount - 1));
+  document.getElementById('btn-people-plus').addEventListener('click', () => setPeople(peopleCount + 1));
+
+  function prepareChallengeEntry() {
+    setPeople(1);
+    challengeFeedbackEl.textContent = '';
+    if (challengeClosed()) {
+      challengeFormEl.hidden = true;
+      challengeFeedbackEl.textContent = 'The challenge has now closed. Thank you to everyone who took part.';
+    } else {
+      challengeFormEl.hidden = false;
+      btnChallengeSubmit.disabled = false;
+    }
+    refreshChallenge();
+  }
+
+  btnChallengeSubmit.addEventListener('click', async () => {
+    const last = Number(store('aedChallengeLast')) || 0;
+    if (Date.now() - last < CHALLENGE_GAP_MS) {
+      challengeFeedbackEl.textContent = 'Thanks — this phone added an entry recently. You can add more family members in an hour.';
+      return;
+    }
+    btnChallengeSubmit.disabled = true;
+    challengeFeedbackEl.textContent = 'Adding…';
+    try {
+      const data = await challengeCall('submit_family_entry', { p_people: peopleCount });
+      store('aedChallengeLast', Date.now());
+      store('aedChallengeMine', (Number(store('aedChallengeMine')) || 0) + peopleCount);
+      store('aedChallengeTotal', data.total);
+      renderChallenge(data.total);
+      challengeFormEl.hidden = true;
+      const added = peopleCount === 1 ? '1 family member' : peopleCount + ' family members';
+      challengeFeedbackEl.textContent = 'Thank you — ' + added + ' added. The total is now ' + data.total.toLocaleString('en-GB') + ' of 500.';
+    } catch (e) {
+      btnChallengeSubmit.disabled = false;
+      challengeFeedbackEl.textContent = navigator.onLine === false
+        ? 'You seem to be offline. Connect to the internet and try again.'
+        : 'Sorry, that didn\'t go through. Please try again in a moment.';
+    }
+  });
+
+  refreshChallenge();
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') refreshChallenge();
   });
 
   function decideShockable() {

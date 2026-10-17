@@ -54,6 +54,14 @@
   START A RESCUE
 </button>
 <p class="home-duration" data-testid="text-duration">Takes about 4 minutes</p>
+
+<section class="challenge-card" id="challenge-card" aria-labelledby="challenge-title" data-testid="card-challenge">
+  <p class="challenge-eyebrow">FAMILY CPR CHALLENGE</p>
+  <h2 class="challenge-title" id="challenge-title">Teach 500 family members by Restart a Heart Day</h2>
+  <p class="challenge-count"><span class="challenge-total" data-challenge-total data-testid="text-challenge-total">–</span> <span class="challenge-of">of 500 taught so far</span></p>
+  <div class="challenge-bar" role="progressbar" aria-label="Family CPR Challenge progress" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0" data-challenge-bar><span></span></div>
+  <p class="challenge-meta" data-challenge-days data-testid="text-challenge-days">Deadline: 16 October 2027</p>
+</section>
     <div class="home-grid">
       <div class="home-card">
         <h2 class="card-title">How it works</h2>
@@ -364,6 +372,23 @@
       <p class="end-card-text">It only takes about 4 minutes. Show a family member how to do CPR and use a defibrillator.</p>
       <button id="btn-share" class="btn btn-accent btn-lg end-card-button" type="button" data-testid="button-share">Share with family</button>
       <p class="end-feedback" id="share-feedback" aria-live="polite"></p>
+    </div>
+
+    <div class="end-card challenge-entry" id="challenge-entry" data-testid="card-challenge-entry">
+      <p class="challenge-eyebrow">FAMILY CPR CHALLENGE</p>
+      <h2 class="end-card-title">Taught your family? Add them to the total</h2>
+      <p class="end-card-text">Count each family member who practised CPR with you. Don't include yourself. No names or personal details are recorded.</p>
+      <p class="challenge-count"><span class="challenge-total" data-challenge-total>–</span> <span class="challenge-of">of 500 so far</span></p>
+      <div class="challenge-bar" role="progressbar" aria-label="Family CPR Challenge progress" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0" data-challenge-bar><span></span></div>
+      <div class="challenge-form" id="challenge-form">
+        <div class="stepper" role="group" aria-label="Number of family members">
+          <button type="button" class="stepper-btn" id="btn-people-minus" aria-label="One fewer" data-testid="button-people-minus">−</button>
+          <output class="stepper-value" id="people-count" aria-live="polite" data-testid="text-people-count">1</output>
+          <button type="button" class="stepper-btn" id="btn-people-plus" aria-label="One more" data-testid="button-people-plus">+</button>
+        </div>
+        <button type="button" class="btn btn-primary end-card-button" id="btn-challenge-submit" data-testid="button-challenge-submit">Add to the challenge</button>
+      </div>
+      <p class="end-feedback" id="challenge-feedback" aria-live="polite" data-testid="text-challenge-feedback"></p>
     </div>
 
     <div class="end-card">
