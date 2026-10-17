@@ -1948,3 +1948,65 @@ main { flex: 1; width: 100%; }
   font-size: var(--text-xs);
   line-height: 1.3;
 }
+
+/* =========================================================
+   Duration, session timer and end-screen additions
+   ========================================================= */
+.home-duration {
+  margin: -14px 0 26px;
+  color: #b4c2bc;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.session-timer {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  right: 12px;
+  z-index: 300;
+  padding: 6px 12px;
+  border: 1px solid #2a3531;
+  border-radius: 999px;
+  background: rgba(13, 18, 16, 0.92);
+  color: #e6ece9;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.session-timer[hidden] { display: none; }
+.session-timer-of { color: #96a39e; font-weight: 500; }
+
+.screen-end .home-eyebrow { margin-bottom: 6px; }
+.screen-end .page-title { margin: 0 0 12px; }
+.end-time {
+  margin: 0 0 20px;
+  color: #78e5a5;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.end-card {
+  margin: 0 0 16px;
+  padding: 18px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  text-align: left;
+}
+.end-card-title { margin: 0 0 6px; font-size: 1.05rem; font-weight: 700; }
+.end-card-text { margin: 0 0 14px; color: var(--color-text-muted); font-size: 0.95rem; line-height: 1.5; }
+.screen-end .end-card .btn { margin-top: 0; }
+.end-card-button { width: 100%; }
+.end-card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.end-card-row .btn { width: 100%; }
+.end-feedback { margin: 10px 0 0; color: #78e5a5; font-size: 0.9rem; min-height: 1em; }
+.end-feedback:empty { display: none; }
+
+/* Intro "Back" button sits in the page flow instead of over the site header */
+.screen-intro .btn-exit {
+  position: relative;
+  top: auto;
+  left: auto;
+  display: flex;
+}

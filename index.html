@@ -35,6 +35,10 @@
   <strong>Training simulator only.</strong> Not a real defibrillator. Follows adult Basic Life Support guidance — suitable for adults and for children old enough and large enough to be managed on the adult sequence. Always call 999/112 and follow real AED voice prompts in an emergency.
 </div>
 
+<div class="session-timer" id="session-timer" role="timer" aria-live="off" hidden>
+  <span id="session-timer-value">0:00</span><span class="session-timer-of"> / about 4:00</span>
+</div>
+
 <main id="main">
 
   <!-- ============ HOME SCREEN ============ -->
@@ -49,6 +53,7 @@
 <button id="btn-start" class="btn btn-primary btn-lg home-start-button" data-testid="button-start-training">
   START A RESCUE
 </button>
+<p class="home-duration" data-testid="text-duration">Takes about 4 minutes</p>
     <div class="home-grid">
       <div class="home-card">
         <h2 class="card-title">How it works</h2>
@@ -284,7 +289,7 @@
   class="btn btn-accent"
   type="button"
 >
-  MAIN MENU
+  CONTINUE
 </button>
         </div>
    <!-- CPR -->
@@ -349,9 +354,28 @@
 
   <!-- ============ SUMMARY / RESTART ============ -->
   <section id="screen-end" class="screen screen-end" aria-hidden="true">
-    <h1 class="page-title">Session ended</h1>
+    <p class="home-eyebrow" id="end-eyebrow">SCENARIO COMPLETE</p>
+    <h1 class="page-title" id="end-title">Well done</h1>
     <p class="lede" id="end-summary">You practised the full AED sequence. Great work — the more familiar this feels, the more useful you'll be in a real emergency.</p>
-    <button id="btn-restart" class="btn btn-primary btn-lg" data-testid="button-restart">Train again</button>
+    <p class="end-time" id="end-time" data-testid="text-end-time" hidden></p>
+
+    <div class="end-card">
+      <h2 class="end-card-title">Now teach someone at home</h2>
+      <p class="end-card-text">It only takes about 4 minutes. Show a family member how to do CPR and use a defibrillator.</p>
+      <button id="btn-share" class="btn btn-accent btn-lg end-card-button" type="button" data-testid="button-share">Share with family</button>
+      <p class="end-feedback" id="share-feedback" aria-live="polite"></p>
+    </div>
+
+    <div class="end-card">
+      <h2 class="end-card-title">Practise again next year</h2>
+      <p class="end-card-text">CPR skills fade over time. Add a yearly reminder to refresh them.</p>
+      <div class="end-card-row">
+        <button id="btn-cal-google" class="btn btn-ghost" type="button" data-testid="button-calendar-google">Google Calendar</button>
+        <button id="btn-cal-ics" class="btn btn-ghost" type="button" data-testid="button-calendar-ics">Other calendar</button>
+      </div>
+    </div>
+
+    <button id="btn-restart" class="btn btn-primary btn-lg" data-testid="button-restart">Practise again</button>
   </section>
 
 </main>

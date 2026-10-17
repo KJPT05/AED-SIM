@@ -29,8 +29,101 @@
   const captionBarText = document.getElementById('caption-bar-text');
   const voiceIndicatorEl = document.getElementById('voice-indicator');
 
+  /* ---------- Recorded voice clips (with built-in voice as fallback) ---------- */
+  const CLIP_BASE = 'audio/';
+  const CLIPS = {
+      "An adult has suddenly collapsed. First, make sure it is safe to approach.": "intro-safe.mp3",
+      "Do not put yourself in danger. Get help and wait until it is safe to approach.": "intro-danger.mp3",
+      "They do not respond. Call 999 immediately and put your phone on speaker.": "intro-no-response.mp3",
+      "The call is connecting. Put your phone on speaker. While you wait, check whether they are breathing normally. The ambulance service call handler can help you.": "intro-connecting.mp3",
+      "They are unresponsive and making occasional gasping or panting breaths. Is this normal breathing? If you are unsure, start C. P. R. now.": "intro-gasping.mp3",
+      "Do not wait. Gasping or panting can be abnormal breathing. If they are unresponsive and you are unsure, start C. P. R. now. The call handler can help you.": "intro-dont-wait.mp3",
+      "Patient is unresponsive, not breathing normally. Start CPR now. Push hard and fast. Follow the beat.": "cpr-start-single.mp3",
+      "Patient is unresponsive, not breathing normally. Start CPR now. Push hard and fast in the centre of the chest. Thirty compressions, then two breaths.": "cpr-start-two.mp3",
+      "Push hard and fast. Follow the beat.": "beat-single.mp3",
+      "Push hard and fast in the centre of the chest. Thirty compressions, then two breaths.": "beat-two.mp3",
+      "The A. E. D. has arrived. Keep C. P. R. going while it is switched on and the pads are prepared. Switch the A. E. D. on now.": "aed-arrived.mp3",
+      "A. E. D. switched on. Attach pads as shown.": "aed-on.mp3",
+      "Remove clothing from the chest. Follow the pictures on the pads and attach them as shown.": "pads.mp3",
+      "Stop C. P. R. Make sure nobody is touching the person. What do you say?": "clear-ask.mp3",
+      "Stop C. P. R. for A. E. D. analysis. Make sure nobody is touching the person. Say, stand clear.": "clear-continue.mp3",
+      "Leave the pads attached. Make sure nobody is touching the person. Say, stand clear.": "clear-pads.mp3",
+      "Analysing heart rhythm. Do not touch the person.": "analysing.mp3",
+      "Shock advised. Charging. Stand clear.": "shock-advised.mp3",
+      "Everyone stand clear. Check that nobody is touching the person. Push the flashing orange button now.": "shock-press.mp3",
+      "Shock delivered. Start CPR now.": "shock-delivered.mp3",
+      "No shock advised. Resume CPR immediately. Start with chest compressions.": "no-shock.mp3",
+      "Ambulance crew has taken over CPR. Scenario complete.": "handover.mp3",
+      "Continue CPR.": "continue.mp3",
+      "Give two breaths.": "breaths.mp3",
+      "Resume compressions.": "resume.mp3"
+  };
+  const clipPlayer = new Audio();
+  clipPlayer.preload = 'auto';
+  let clipText = null;
+  let queuedClipText = null;
+
+  function normaliseKey(text) { return text.replace(/\s+/g, ' ').trim(); }
+  function cleanCaption(text) {
+    return text.replace(/C\. P\. R\./g, 'CPR').replace(/A\. E\. D\./g, 'AED');
+  }
+  function clipIsPlaying() {
+    return clipText !== null && !clipPlayer.paused && !clipPlayer.ended;
+  }
+  function voiceBusy() {
+    return clipIsPlaying() || queuedClipText !== null || (speechSupported && speechSynthesis.speaking);
+  }
+  function stopClip() {
+    clipText = null;
+    queuedClipText = null;
+    try { clipPlayer.pause(); } catch (e) { /* ignore */ }
+    if (voiceIndicatorEl) voiceIndicatorEl.classList.remove('active');
+  }
+  clipPlayer.addEventListener('playing', () => { if (voiceIndicatorEl) voiceIndicatorEl.classList.add('active'); });
+  clipPlayer.addEventListener('ended', () => {
+    if (voiceIndicatorEl) voiceIndicatorEl.classList.remove('active');
+    clipText = null;
+    if (queuedClipText) {
+      const next = queuedClipText;
+      queuedClipText = null;
+      speak(next, { interrupt: true });
+    }
+  });
+  clipPlayer.addEventListener('error', () => {
+    // Clip missing or unplayable — read the same line with the phone's voice instead.
+    const t = clipText;
+    stopClip();
+    if (t) speakWithBuiltInVoice(t, true);
+  });
+
   function speak(text, { interrupt = false } = {}) {
-    captionBarText.textContent = text;
+    const file = CLIPS[normaliseKey(text)];
+    if (file && !interrupt && clipIsPlaying()) {
+      // Let the current prompt finish, then play this one straight after.
+      queuedClipText = text;
+      return;
+    }
+    captionBarText.textContent = cleanCaption(text);
+    if (file) {
+      if (speechSupported) speechSynthesis.cancel();
+      stopClip();
+      clipText = text;
+      clipPlayer.src = CLIP_BASE + file;
+      const p = clipPlayer.play();
+      if (p && p.catch) {
+        p.catch((err) => {
+          if (err && err.name === 'AbortError') return; // replaced by a newer prompt
+          const t = clipText;
+          stopClip();
+          if (t) speakWithBuiltInVoice(t, true);
+        });
+      }
+      return;
+    }
+    speakWithBuiltInVoice(text, interrupt);
+  }
+
+  function speakWithBuiltInVoice(text, interrupt) {
     if (!speechSupported) return;
     function queue() {
      const utter = new SpeechSynthesisUtterance(
@@ -186,6 +279,7 @@ const btnMainMenu = document.getElementById('btn-main-menu');
     if (cprTickTimer) { clearInterval(cprTickTimer); cprTickTimer = null; }
     if (breathsInterval) { clearInterval(breathsInterval); breathsInterval = null; }
     if (speechSupported) speechSynthesis.cancel();
+    stopClip();
   }
   function after(ms, fn) {
     const mySession = sessionId;
@@ -232,6 +326,7 @@ function startRescueIntro() {
   introStep = 0;
 
   resetDeviceUI();
+  startSessionTimer();
   showScreen('intro');
   renderIntroStep();
 }
@@ -297,14 +392,143 @@ function renderIntroStep() {
   );
 }
 }
-  function endSession(spoken) {
+  /* ---------- Whole-session timer (about 4 minutes) ---------- */
+  const sessionTimerEl = document.getElementById('session-timer');
+  const sessionTimerValueEl = document.getElementById('session-timer-value');
+  let sessionStartedAt = 0;
+  let sessionElapsed = 0;
+  let sessionTimerInterval = null;
+
+  function formatTime(totalSeconds) {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return m + ':' + String(s).padStart(2, '0');
+  }
+  function renderSessionTimer() {
+    sessionElapsed = Math.floor((Date.now() - sessionStartedAt) / 1000);
+    sessionTimerValueEl.textContent = formatTime(sessionElapsed);
+  }
+  function startSessionTimer() {
+    stopSessionTimer();
+    sessionStartedAt = Date.now();
+    sessionElapsed = 0;
+    renderSessionTimer();
+    sessionTimerEl.hidden = false;
+    sessionTimerInterval = setInterval(renderSessionTimer, 1000);
+  }
+  function stopSessionTimer() {
+    if (sessionTimerInterval) {
+      clearInterval(sessionTimerInterval);
+      sessionTimerInterval = null;
+      renderSessionTimer();
+    }
+  }
+  function hideSessionTimer() {
+    stopSessionTimer();
+    sessionTimerEl.hidden = true;
+  }
+
+  function endSession(completed) {
     sessionId++; // invalidate all pending callbacks
+    const finished = completed === true;
+    stopSessionTimer();
     clearAllTimers();
     resetDeviceUI();
-    document.getElementById('end-summary').textContent =
-      spoken || 'You practised the full AED sequence. Great work — the more familiar this feels, the more useful you\'ll be in a real emergency.';
+    hideSessionTimer();
+
+    const endTimeEl = document.getElementById('end-time');
+    document.getElementById('end-eyebrow').textContent = finished ? 'SCENARIO COMPLETE' : 'SESSION ENDED';
+    document.getElementById('end-title').textContent = finished ? 'Well done' : 'Session ended';
+    document.getElementById('end-summary').textContent = finished
+      ? 'You practised the full rescue: checks, calling 999, CPR and using the AED until the ambulance crew took over.'
+      : 'You can pick up where you left off any time. The full rescue takes about 4 minutes.';
+    if (finished && sessionElapsed > 0) {
+      endTimeEl.textContent = 'You completed the rescue in ' + formatTime(sessionElapsed) + '.';
+      endTimeEl.hidden = false;
+    } else {
+      endTimeEl.hidden = true;
+    }
+    document.getElementById('share-feedback').textContent = '';
     showScreen('end');
   }
+
+  /* ---------- Share with family ---------- */
+  const SHARE_URL = 'https://kjpt05.github.io/AED-SIM/';
+  const SHARE_TEXT = 'Can you spare 4 minutes? Practise CPR and using a defibrillator with me on AED Trainer. #ResusReady';
+  const shareFeedbackEl = document.getElementById('share-feedback');
+
+  document.getElementById('btn-share').addEventListener('click', async () => {
+    shareFeedbackEl.textContent = '';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'AED Trainer', text: SHARE_TEXT, url: SHARE_URL });
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return; // user closed the share sheet
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(SHARE_TEXT + ' ' + SHARE_URL);
+      shareFeedbackEl.textContent = 'Link copied — paste it into a message to your family.';
+    } catch (e) {
+      window.open('https://wa.me/?text=' + encodeURIComponent(SHARE_TEXT + ' ' + SHARE_URL), '_blank', 'noopener');
+    }
+  });
+
+  /* ---------- Yearly reminder (calendar event, repeats every year) ---------- */
+  const REMINDER_TITLE = 'Refresh my CPR skills (AED Trainer)';
+  const REMINDER_DETAILS = 'Take 4 minutes to practise CPR and using a defibrillator: ' + SHARE_URL;
+
+  function reminderDates() {
+    const start = new Date();
+    start.setFullYear(start.getFullYear() + 1);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1);
+    const fmt = (d) => d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+    return { start: fmt(start), end: fmt(end) };
+  }
+
+  document.getElementById('btn-cal-google').addEventListener('click', () => {
+    const d = reminderDates();
+    const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+      + '&text=' + encodeURIComponent(REMINDER_TITLE)
+      + '&details=' + encodeURIComponent(REMINDER_DETAILS)
+      + '&dates=' + d.start + '/' + d.end
+      + '&recur=' + encodeURIComponent('RRULE:FREQ=YEARLY');
+    window.open(url, '_blank', 'noopener');
+  });
+
+  document.getElementById('btn-cal-ics').addEventListener('click', () => {
+    const d = reminderDates();
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//AED Trainer//EN',
+      'BEGIN:VEVENT',
+      'UID:aed-trainer-' + Date.now() + '@kjpt05.github.io',
+      'DTSTAMP:' + stamp,
+      'DTSTART;VALUE=DATE:' + d.start,
+      'DTEND;VALUE=DATE:' + d.end,
+      'RRULE:FREQ=YEARLY',
+      'SUMMARY:' + REMINDER_TITLE,
+      'DESCRIPTION:' + REMINDER_DETAILS,
+      'BEGIN:VALARM',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:' + REMINDER_TITLE,
+      'TRIGGER:PT9H',
+      'END:VALARM',
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'cpr-refresher-reminder.ics';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
 
   function decideShockable() {
     if (scenarioMode === 'shockable') return true;
@@ -450,7 +674,7 @@ btnShock.addEventListener('click', () => {
   after(2800, goToCpr);
 });
 btnMainMenu.addEventListener('click', () => {
-  window.location.reload();
+  endSession(true);
 });
 function goToNoShock() {
   setLight(lightShock, null);
@@ -487,6 +711,7 @@ function goToHandover() {
   setLight(lightShock, null);
 
   showPanel('handover');
+  stopSessionTimer();
 
 captionBarText.textContent =
   'Ambulance crew has taken over CPR. Scenario complete.';
@@ -523,7 +748,7 @@ speak(
         startBreathsPhase();
         return;
       }
-      if (rescuerMode === 'single' && compressionCount % 15 === 0 && cprSecondsLeft > 5) {
+      if (rescuerMode === 'single' && compressionCount % 15 === 0 && cprSecondsLeft > 5 && !voiceBusy()) {
         speak('Continue CPR.', { interrupt: true });
       }
     }, BEAT_MS);
@@ -564,7 +789,7 @@ speak(
 
   if (cprTimerLabelEl) {
     cprTimerLabelEl.textContent = aedArrived
-      ? 'until re-analysis'
+      ? 'until ambulance arrives'
       : 'until AED arrives';
   }
 
@@ -577,7 +802,9 @@ speak(
   if (!aedArrived) {
     speak('Patient is unresponsive, not breathing normally. Start CPR now. ' + beatLine, { interrupt: true });
   } else {
-    speak(beatLine, { interrupt: true });
+    // Compressions restart straight away; the CPR instruction waits until
+    // "Shock delivered" / "No shock advised" has finished speaking.
+    speak(beatLine, { interrupt: false });
   }
 
   startCompressionBeat();
@@ -694,6 +921,7 @@ btnIntroRepeat.addEventListener('click', () => {
 btnIntroExit.addEventListener('click', () => {
   sessionId++;
   clearAllTimers();
+  hideSessionTimer();
   showScreen('home');
 });
   btnExit.addEventListener('click', () => {
