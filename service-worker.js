@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aed-trainer-v5';
+const CACHE_NAME = 'aed-trainer-v6';
 const ASSETS = [
   './',
   './index.html',
