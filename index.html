@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>AED Trainer — Practice CPR &amp; Defibrillator Use</title>
+<title>AED Trainer - Practice CPR &amp; Defibrillator Use</title>
 <meta name="description" content="A free interactive simulator that mimics a public-access defibrillator (AED) so anyone can practise CPR and learn how an AED talks you through saving a life. Training use only." />
 <meta name="theme-color" content="#12181a" />
 <meta name="mobile-web-app-capable" content="yes" />
@@ -57,7 +57,7 @@
   <summary class="card-title">How it works</summary>
   <ol class="steps-list">
     <li>Check that it is safe and check for a response</li>
-    <li>If the person is unresponsive, call 999 immediately</li>
+    <li>If the person is unresponsive, call 112/999 immediately</li>
     <li>While the call connects, check whether they are breathing normally</li>
     <li>If breathing is abnormal, absent or you are unsure, start CPR</li>
     <li>When the AED arrives, switch it on and follow its voice prompts</li>
@@ -115,6 +115,44 @@
   <p class="challenge-count"><span class="challenge-total" data-challenge-total data-testid="text-challenge-total">–</span> <span class="challenge-of">of 500 taught so far</span></p>
   <div class="challenge-bar" role="progressbar" aria-label="Family CPR Challenge progress" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0" data-challenge-bar><span></span></div>
   <p class="challenge-meta" data-challenge-days data-testid="text-challenge-days">Deadline: 16 October 2027</p>
+<div class="challenge-share" role="group" aria-label="Share the Family CPR Challenge">
+  <p class="card-hint">Help more families learn CPR. Share the challenge.</p>
+
+  <div class="challenge-share-buttons">
+    <a
+      class="btn btn-secondary"
+      href="https://wa.me/?text=Help%20us%20teach%20500%20family%20members%20CPR.%20Practise%20CPR%20and%20using%20an%20AED%20with%20AED%20Trainer%3A%20https%3A%2F%2Fkjpt05.github.io%2FAED-SIM%2F"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Share on WhatsApp
+    </a>
+
+    <a
+      class="btn btn-secondary"
+      href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkjpt05.github.io%2FAED-SIM%2F"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Share on Facebook
+    </a>
+
+    <button
+      id="btn-challenge-copy"
+      class="btn btn-secondary"
+      type="button"
+    >
+      Copy link
+    </button>
+  </div>
+
+  <p
+    id="challenge-share-feedback"
+    class="end-feedback"
+    role="status"
+    aria-live="polite"
+  ></p>
+</div>
 </section>
 
     <p class="voice-hint" id="voice-support-hint"></p>
@@ -141,11 +179,11 @@
 
       <div id="intro-actions" class="intro-actions">
         <button id="btn-intro-primary" class="btn btn-primary btn-lg" type="button">
-          YES — CHECK FOR A RESPONSE
+          YES, CHECK FOR A RESPONSE
         </button>
 
         <button id="btn-intro-secondary" class="btn btn-secondary btn-lg" type="button">
-          NO — GET HELP / STAY SAFE
+          NO, GET HELP / STAY SAFE
         </button>
       </div>
 
@@ -154,7 +192,7 @@
       </button>
 
       <p class="intro-safety-note">
-        Training practice only. In a real emergency, call 999/112 and follow the ambulance call handler’s instructions.
+        Training practice only. In a real emergency, call 112/999 and follow the ambulance call handler’s instructions.
       </p>
     </div>
   </section>
@@ -271,7 +309,7 @@
          <div class="analysis-ring">
     <div class="ring-spinner"></div>
 </div>
-          <p class="caption-text" id="caption-analysing">Do not touch the patient. Analysing now.</p>
+          <p class="caption-text" id="caption-analysing">Do not touch the person. Analysing now.</p>
         </div>
 
         <!-- SHOCK ADVISED / CHARGING -->
@@ -279,7 +317,7 @@
 <div class="warning-triangle" aria-hidden="true">⚠️</div>
           <p class="status-code status-code-alert" id="shock-status-code">SHOCK ADVISED</p>
           <div class="charge-bar" id="charge-bar" aria-hidden="true"><span></span></div>
-          <p class="caption-text" id="caption-shock">Charging. Stand clear of the patient.</p>
+          <p class="caption-text" id="caption-shock">Charging. Stand clear of the person.</p>
           <button id="btn-shock" class="shock-button" disabled data-testid="button-deliver-shock">
             <span class="shock-button-label">SHOCK</span>
           </button>
@@ -297,10 +335,6 @@
 <div class="handover-symbol" aria-hidden="true">✓</div>
 
 <p class="handover-title">SCENARIO COMPLETE</p>
-
-<p class="caption-text">
-  The crew has taken over CPR.
-</p>
 
 <button
   id="btn-main-menu"
@@ -374,7 +408,7 @@
   <section id="screen-end" class="screen screen-end" aria-hidden="true">
     <p class="home-eyebrow" id="end-eyebrow">SCENARIO COMPLETE</p>
     <h1 class="page-title" id="end-title">Well done</h1>
-    <p class="lede" id="end-summary">You practised the full AED sequence. Great work — the more familiar this feels, the more useful you'll be in a real emergency.</p>
+    <p class="lede" id="end-summary">You practised the full AED sequence. Great work, the more familiar this feels, the more useful you'll be in a real emergency.</p>
     <p class="end-time" id="end-time" data-testid="text-end-time" hidden></p>
 
     <div class="end-card">
@@ -417,16 +451,21 @@
 
 <footer class="site-footer">
   <p>
-    For real emergencies in the UK, always call <strong>999</strong>.
+    In a real emergency, call your local emergency number.
+In the UK, call <strong>112/999</strong>.
     This tool follows the general public-access AED sequence described
     by the
     <a href="https://www.resus.org.uk/"
        target="_blank"
        rel="noopener">Resuscitation Council UK</a>
-    guidelines and is for familiarisation and practice only — it is
+    guidelines and is for familiarisation and practice only, it is
     not a substitute for an accredited CPR/AED course.
   </p>
-
+<p class="emergency-number-note">
+  Voice prompts use the UK emergency number, 999.
+  Both 112 and 999 work in the UK; 112 works throughout the EU.
+  Elsewhere, call your local emergency number.
+</p>
   <p class="developer-credit">
     Developed by Kieran Toner.
   </p>
@@ -459,7 +498,7 @@
   let scrollRaf = 0;
   let trustedTopOrigin = null;
 
-  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
+  // Allow entries like "https://*.preview.i.perplexity.ai", the wildcard
   // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
   // across multiple labels.
   function matchesAllowedOrigin(origin) {
@@ -483,7 +522,7 @@
   // real origin like https://www.perplexity.ai) we trust event.origin directly.
   // When event.origin is "null" (opaque broker srcdoc), we fall back to the
   // broker's stamped `parentOrigin` to identify the top window. The fallback
-  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
+  // is claim-only, we rely on the browser's native `targetOrigin` enforcement
   // on the response path (see postToTrustedTop) to ensure replies can't be
   // delivered to anyone but the actual top window of that claimed origin.
   function getTrustedParentOrigin(event) {
@@ -496,7 +535,7 @@
   // All responses go to window.top with targetOrigin = the allowlisted origin.
   // An attacker that iframes us inside their own null-origin broker can claim
   // any parentOrigin they like, but the browser will drop the reply whenever
-  // the real top's origin doesn't match — so the screenshot never leaves.
+  // the real top's origin doesn't match, so the screenshot never leaves.
   function postToTrustedTop(message) {
     if (!trustedTopOrigin) return;
     try {
@@ -510,7 +549,7 @@
     try {
       const computedStyle = getComputedStyle(original);
       // cssText on a computed style is the serialized declaration in modern
-      // Chromium/Safari — a single read beats enumerating ~400 longhand
+      // Chromium/Safari, a single read beats enumerating ~400 longhand
       // properties. Firefox returns "" here, so we fall back on empty.
       const serialized = computedStyle.cssText;
       if (serialized) {
@@ -552,7 +591,7 @@
 
   // Cache resolved font URL -> data URI across captures. Fonts on a page
   // essentially never change, and a batch run emits multiple captures back to
-  // back — without this we'd refetch + re-base64 every time.
+  // back, without this we'd refetch + re-base64 every time.
   const fontDataUriCache = new Map();
   const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
 
@@ -708,7 +747,7 @@
       stripExternal(clone);
 
       // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
-      // can resolve them — external font URLs aren't fetched during
+      // can resolve them, external font URLs aren't fetched during
       // foreignObject rendering, which would otherwise force a fallback face
       // and change text metrics.
       const inlinedFontCss = await buildInlinedFontCss();
@@ -798,7 +837,7 @@
     </p>
 
     <p>
-      In a real emergency, call 999/112 and follow the ambulance
+      In a real emergency, call 112/999 and follow the ambulance
       call handler’s instructions and the real AED’s voice prompts.
     </p>
   </div>
@@ -817,7 +856,7 @@
     class="safety-continue"
     disabled
   >
-    I understand — continue
+    I understand, continue
   </button>
 </dialog>
 </body>

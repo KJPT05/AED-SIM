@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aed-trainer-v4';
+const CACHE_NAME = 'aed-trainer-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   './js/app.js',
   './manifest.json',
   './images/adult-chest.png',
+  './images/adult-female-chest.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
