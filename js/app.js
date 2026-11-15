@@ -319,7 +319,32 @@ const btnMainMenu = document.getElementById('btn-main-menu');
     showScreen('device');
     goToCpr();
   }
+  /* ---------- Patient illustration ---------- */
+function selectPatientForRescue() {
+  const image = document.getElementById('patient-chest-image');
+
+  if (!image) return;
+
+  const container = image.closest('.pad-placement-container');
+  const isFemale = Math.random() < 0.5;
+
+  image.src = isFemale
+    ? 'images/adult-female-chest.png'
+    : 'images/adult-chest.png';
+
+  image.alt = isFemale
+    ? 'Adult female chest illustration for AED pad-placement practice'
+    : 'Adult male chest illustration for AED pad-placement practice';
+
+  if (container) {
+    container.dataset.patient = isFemale ? 'female' : 'male';
+    container.style.aspectRatio = isFemale
+      ? '1376 / 768'
+      : '1036 / 613';
+  }
+}
 function startRescueIntro() {
+  selectPatientForRescue();
   scenarioMode = document.querySelector('input[name="scenario"]:checked').value;
   rescuerMode = document.querySelector('input[name="rescuers"]:checked').value;
   trainingMode = 'sixty-second';
@@ -1062,5 +1087,74 @@ btnIntroExit.addEventListener('click', () => {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('service-worker.js').catch(() => {});
     });
+  }
+})();
+/* ---------- First-use safety acknowledgement ---------- */
+(function () {
+  'use strict';
+
+  function initialiseSafetyAcknowledgement() {
+    const dialog = document.getElementById('safety-dialog');
+    const checkbox = document.getElementById('safety-acknowledge');
+    const continueButton = document.getElementById('safety-continue');
+    const startButton = document.getElementById('btn-start');
+    const storageKey = 'aedSafetyAcknowledgedVersion';
+    const safetyVersion = '1';
+
+    if (!dialog || !checkbox || !continueButton) {
+      console.error('Safety acknowledgement markup is missing.');
+      return;
+    }
+
+    let acknowledged = false;
+
+    try {
+      acknowledged =
+        window.localStorage.getItem(storageKey) === safetyVersion;
+    } catch (error) {
+      // If storage is unavailable, show the dialogue each visit.
+    }
+
+    if (acknowledged) return;
+
+    checkbox.checked = false;
+    continueButton.disabled = true;
+
+    checkbox.addEventListener('change', function () {
+      continueButton.disabled = !checkbox.checked;
+    });
+
+    dialog.addEventListener('cancel', function (event) {
+      event.preventDefault();
+    });
+
+    continueButton.addEventListener('click', function () {
+      if (!checkbox.checked) return;
+
+      try {
+        window.localStorage.setItem(storageKey, safetyVersion);
+      } catch (error) {
+        // Allow this visit even if the choice cannot be saved.
+      }
+
+      dialog.close();
+
+      if (startButton) {
+        startButton.focus();
+      }
+    });
+
+    dialog.showModal();
+    checkbox.focus();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener(
+      'DOMContentLoaded',
+      initialiseSafetyAcknowledgement,
+      { once: true }
+    );
+  } else {
+    initialiseSafetyAcknowledgement();
   }
 })();

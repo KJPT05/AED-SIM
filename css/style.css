@@ -174,10 +174,18 @@ a:hover { color: var(--color-primary-hover); }
    Header / disclaimer / footer
    ========================================================= */
 .site-header {
-  display: flex; align-items: center; justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
   padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--color-divider);
   background: var(--color-surface);
+}
+
+.site-header > .brand {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
 }
 .brand { display: flex; align-items: center; gap: var(--space-2); }
 .brand-mark { border-radius: var(--radius-sm); }
@@ -2091,3 +2099,185 @@ main { flex: 1; width: 100%; }
 }
 .screen-end .challenge-form .btn { margin-top: 0; }
 @media (prefers-reduced-motion: reduce) { .challenge-bar span { transition: none; } }
+/* Opening page: expandable information and options */
+.home-grid {
+  align-items: start;
+}
+
+.home-grid > .home-disclosure {
+  grid-row: auto;
+  grid-column: auto;
+  padding: 0;
+}
+
+.home-disclosure > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 60px;
+  margin: 0;
+  padding: 18px;
+  cursor: pointer;
+  list-style: none;
+  border-radius: inherit;
+}
+
+.home-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.home-disclosure > summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: #78e5a5;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.home-disclosure[open] > summary::after {
+  content: "−";
+}
+
+.home-disclosure > summary:hover {
+  background: rgba(120, 229, 165, 0.08);
+}
+
+.home-disclosure > summary:focus-visible {
+  outline: 3px solid #ffd15d;
+  outline-offset: 3px;
+}
+
+.home-disclosure[open] > summary {
+  border-bottom: 1px solid rgba(152, 180, 166, 0.22);
+  border-radius: 16px 16px 0 0;
+}
+
+.home-disclosure > .steps-list {
+  padding: 18px;
+}
+
+.home-disclosure > .options-group {
+  padding: 18px;
+}
+
+.home-disclosure > .options-group + .options-group {
+  border-top: 1px solid rgba(152, 180, 166, 0.22);
+}
+/* First-use safety acknowledgement */
+.safety-dialog {
+  box-sizing: border-box;
+  width: min( calc(100% - 2rem), 32rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  margin: auto;
+  padding: 1.5rem;
+  border: 1px solid #47745a;
+  border-radius: 16px;
+  background: #14231b;
+  color: #f1f5ef;
+  font-family: inherit;
+  line-height: 1.6;
+  box-shadow: 0 20px 70px rgb(0 0 0 / 55%);
+}
+
+.safety-dialog::backdrop {
+  background: rgb(0 0 0 / 80%);
+}
+
+.safety-dialog h2 {
+  margin: 0 0 1rem;
+  color: #f1f5ef;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.safety-dialog p {
+  margin: 0 0 1rem;
+}
+
+.safety-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+  padding: 1rem;
+  border: 1px solid #47745a;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.safety-check input {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.2rem 0 0;
+  accent-color: #79e5a3;
+}
+
+.safety-continue {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #ffd17a;
+  border-radius: 10px;
+  background: #ffac38;
+  color: #17140d;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.safety-continue:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.safety-continue:focus-visible,
+.safety-check input:focus-visible {
+  outline: 3px solid #79e5a3;
+  outline-offset: 4px;
+}
+/* Developer attribution */
+.site-footer .developer-credit {
+  width: 100%;
+  max-width: 38rem;
+  margin: 1rem auto 0.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.site-footer .developer-about {
+  max-width: 38rem;
+  margin: 0.75rem auto 1rem;
+  text-align: left;
+  border: 1px solid var(--color-divider);
+  border-radius: 10px;
+  background: var(--color-surface);
+}
+
+.site-footer .developer-about > summary {
+  padding: 0.75rem 1rem;
+  color: #79e5a3;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.site-footer .developer-about > summary:focus-visible {
+  outline: 3px solid #79e5a3;
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+.site-footer .developer-about > p {
+  margin: 0;
+  padding: 0 1rem 1rem;
+  color: #d5dfd8;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+/* Female patient: provisional pad 2 positioning */
+.pad-placement-container[data-patient="female"] .pad-b {
+  left: 73%;
+  top: 75%;
+}

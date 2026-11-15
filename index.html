@@ -31,10 +31,6 @@
   </div>
 </header>
 
-<div class="disclaimer-bar" role="note">
-  <strong>Training simulator only.</strong> Not a real defibrillator. Follows adult Basic Life Support guidance — suitable for adults and for children old enough and large enough to be managed on the adult sequence. Always call 999/112 and follow real AED voice prompts in an emergency.
-</div>
-
 <div class="session-timer" id="session-timer" role="timer" aria-live="off" hidden>
   <span id="session-timer-value">0:00</span><span class="session-timer-of"> / about 4:00</span>
 </div>
@@ -55,62 +51,71 @@
 </button>
 <p class="home-duration" data-testid="text-duration">Takes about 4 minutes</p>
 
+
+    <div class="home-grid">
+     <details class="home-card home-disclosure">
+  <summary class="card-title">How it works</summary>
+  <ol class="steps-list">
+    <li>Check that it is safe and check for a response</li>
+    <li>If the person is unresponsive, call 999 immediately</li>
+    <li>While the call connects, check whether they are breathing normally</li>
+    <li>If breathing is abnormal, absent or you are unsure, start CPR</li>
+    <li>When the AED arrives, switch it on and follow its voice prompts</li>
+    <li>Attach the pads where shown, stand clear for analysis, then restart CPR immediately</li>
+  </ol>
+</details>
+
+<details class="home-card home-disclosure">
+  <summary class="card-title">Options</summary>
+
+  <div class="options-group">
+    <h2 class="card-title">AED outcome</h2>
+    <p class="card-hint">Choose what the AED will advise during rhythm analysis.</p>
+
+    <fieldset class="scenario-picker">
+      <legend class="sr-only">Choose a training scenario</legend>
+      <label class="radio-row">
+        <input type="radio" name="scenario" value="random" checked />
+        <span>Random <em>(most realistic)</em></span>
+      </label>
+      <label class="radio-row">
+        <input type="radio" name="scenario" value="shockable" />
+        <span>Always shockable rhythm</span>
+      </label>
+      <label class="radio-row">
+        <input type="radio" name="scenario" value="noshock" />
+        <span>Always no shock advised</span>
+      </label>
+    </fieldset>
+  </div>
+
+  <div class="options-group">
+    <h2 class="card-title">Rescuer mode</h2>
+    <p class="card-hint">Choose continuous compressions or adult 30:2 CPR with a second rescuer.</p>
+
+    <fieldset class="scenario-picker">
+      <legend class="sr-only">Choose number of rescuers</legend>
+      <label class="radio-row">
+        <input type="radio" name="rescuers" value="single" checked data-testid="radio-rescuers-single" />
+        <span>Single rescuer <em>(continuous compressions)</em></span>
+      </label>
+      <label class="radio-row">
+        <input type="radio" name="rescuers" value="two" data-testid="radio-rescuers-two" />
+        <span>Two rescuers <em>(adult 30 compressions : 2 breaths)</em></span>
+      </label>
+    </fieldset>
+  </div>
+</details>
+</div>
+
 <section class="challenge-card" id="challenge-card" aria-labelledby="challenge-title" data-testid="card-challenge">
   <p class="challenge-eyebrow">FAMILY CPR CHALLENGE</p>
-  <h2 class="challenge-title" id="challenge-title">Teach 500 family members by Restart a Heart Day</h2>
+  <h2 class="challenge-title" id="challenge-title">Together, let’s teach 500 family members CPR by Restart a Heart Day</h2>
+<p class="card-hint">Teach someone in your family CPR and how to use an AED. Every person taught counts towards our shared target of 500.</p>
   <p class="challenge-count"><span class="challenge-total" data-challenge-total data-testid="text-challenge-total">–</span> <span class="challenge-of">of 500 taught so far</span></p>
   <div class="challenge-bar" role="progressbar" aria-label="Family CPR Challenge progress" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0" data-challenge-bar><span></span></div>
   <p class="challenge-meta" data-challenge-days data-testid="text-challenge-days">Deadline: 16 October 2027</p>
 </section>
-    <div class="home-grid">
-      <div class="home-card">
-        <h2 class="card-title">How it works</h2>
-        <ol class="steps-list">
-  <li>Check that it is safe and check for a response</li>
-  <li>If the person is unresponsive, call 999 immediately</li>
-  <li>While the call connects, check whether they are breathing normally</li>
-  <li>If breathing is abnormal, absent or you are unsure, start CPR</li>
-  <li>When the AED arrives, switch it on and follow its voice prompts</li>
-  <li>Attach the pads where shown, stand clear for analysis, then restart CPR immediately</li>
-</ol>
-      </div>
-
-      <div class="home-card">
-        <h2 class="card-title">AED outcome</h2>
-<p class="card-hint">Choose what the AED will advise during rhythm analysis.</p>
-        <fieldset class="scenario-picker">
-          <legend class="sr-only">Choose a training scenario</legend>
-          <label class="radio-row">
-            <input type="radio" name="scenario" value="random" checked />
-            <span>Random <em>(most realistic)</em></span>
-          </label>
-          <label class="radio-row">
-            <input type="radio" name="scenario" value="shockable" />
-            <span>Always shockable rhythm</span>
-          </label>
-          <label class="radio-row">
-            <input type="radio" name="scenario" value="noshock" />
-            <span>Always no shock advised</span>
-          </label>
-        </fieldset>
-      </div>
-
-      <div class="home-card home-card-wide">
-        <h2 class="card-title">Rescuer mode</h2>
-<p class="card-hint">Choose continuous compressions or adult 30:2 CPR with a second rescuer.</p>
-        <fieldset class="scenario-picker">
-          <legend class="sr-only">Choose number of rescuers</legend>
-          <label class="radio-row">
-            <input type="radio" name="rescuers" value="single" checked data-testid="radio-rescuers-single" />
-            <span>Single rescuer <em>(continuous compressions)</em></span>
-          </label>
-          <label class="radio-row">
-            <input type="radio" name="rescuers" value="two" data-testid="radio-rescuers-two" />
-            <span>Two rescuers <em>(adult 30 compressions : 2 breaths)</em></span>
-          </label>
-        </fieldset>
-      </div>
-    </div>
 
     <p class="voice-hint" id="voice-support-hint"></p>
   </section>
@@ -218,7 +223,12 @@
         <div class="panel panel-pads" id="panel-pads" data-panel="pads" hidden>
           <p class="status-code">ATTACH PADS</p>
           <div class="pad-placement-container">
-            <img src="images/adult-chest.png" alt="Adult chest showing pad 1 placed below the right collarbone and pad 2 on the mid-axillary line under the left armpit" class="chest-photo">
+           <img
+  id="patient-chest-image"
+  src="images/adult-chest.png"
+  alt="Adult chest illustration for AED pad-placement practice"
+  class="chest-photo"
+>
             <span class="aed-pad pad-a" aria-hidden="true">1</span>
             <span class="aed-pad pad-b" aria-hidden="true">2</span>
           </div>
@@ -406,10 +416,36 @@
 </main>
 
 <footer class="site-footer">
-  <p>For real emergencies in the UK, always call <strong>999</strong>. This tool follows the general public‑access AED sequence described by the <a href="https://www.resus.org.uk/" target="_blank" rel="noopener">Resuscitation Council UK</a> guidelines and is for familiarisation and practice only — it is not a substitute for an accredited CPR/AED course.</p>
-<p class="privacy-link">
-  <a href="privacy.html">Privacy &amp; Safety</a>
-</p></footer>
+  <p>
+    For real emergencies in the UK, always call <strong>999</strong>.
+    This tool follows the general public-access AED sequence described
+    by the
+    <a href="https://www.resus.org.uk/"
+       target="_blank"
+       rel="noopener">Resuscitation Council UK</a>
+    guidelines and is for familiarisation and practice only — it is
+    not a substitute for an accredited CPR/AED course.
+  </p>
+
+  <p class="developer-credit">
+    Developed by Kieran Toner.
+  </p>
+
+  <details class="developer-about">
+    <summary>About the developer</summary>
+    <p>
+      Kieran Toner is a Lecturer in Adult Nursing at Ulster University
+      and an Advanced Life Support (ALS) instructor. He holds an MSc
+      in Advanced Practice and has extensive clinical experience in
+      acute and cardiac care. His teaching interests include
+      resuscitation, simulation and interactive digital learning.
+    </p>
+  </details>
+
+  <p class="privacy-link">
+    <a href="privacy.html">Privacy &amp; Safety</a>
+  </p>
+</footer>
 
 <script src="js/app.js" defer></script>
 <script data-pplx-inline-edit>
@@ -740,5 +776,49 @@
 })();
 
 
-</script></body>
+</script>
+<!-- First-use safety acknowledgement -->
+<dialog
+  id="safety-dialog"
+  class="safety-dialog"
+  aria-labelledby="safety-title"
+  aria-describedby="safety-description"
+>
+  <h2 id="safety-title">Before you practise</h2>
+
+  <div id="safety-description">
+    <p>
+      This is a training simulator only, not a real defibrillator.
+      It cannot assess a person or deliver a shock.
+    </p>
+
+    <p>
+      It supports CPR and AED practice but does not replace
+      practical CPR training.
+    </p>
+
+    <p>
+      In a real emergency, call 999/112 and follow the ambulance
+      call handler’s instructions and the real AED’s voice prompts.
+    </p>
+  </div>
+
+  <label class="safety-check" for="safety-acknowledge">
+    <input type="checkbox" id="safety-acknowledge">
+    <span>
+      I understand this is a training simulator, not a real AED
+      or a replacement for practical CPR training.
+    </span>
+  </label>
+
+  <button
+    type="button"
+    id="safety-continue"
+    class="safety-continue"
+    disabled
+  >
+    I understand — continue
+  </button>
+</dialog>
+</body>
 </html>
