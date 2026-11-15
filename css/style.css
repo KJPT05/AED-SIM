@@ -2281,3 +2281,73 @@ main { flex: 1; width: 100%; }
   left: 73%;
   top: 75%;
 }
+/* Start a Rescue: show a hand pointer when enabled */
+#btn-start:not(:disabled),
+#btn-start:not(:disabled):hover {
+  cursor: pointer;
+}
+/* Ensure hidden answer buttons are not displayed */
+#btn-intro-secondary[hidden],
+#btn-clear-continue[hidden],
+#btn-clear-pads[hidden] {
+  display: none !important;
+}
+/* Family CPR Challenge sharing */
+.challenge-share {
+  margin-top: 1.25rem;
+}
+
+.challenge-share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.challenge-share-buttons .btn {
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+/* Shared appearance for the two social sharing links */
+.challenge-share-buttons a.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.85rem 1.25rem;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* WhatsApp: dark green background with yellow text */
+.challenge-share-buttons a[href^="https://wa.me/"] {
+  background: #075e36;
+  color: #ffe66d;
+  border-color: #25d366;
+}
+
+.challenge-share-buttons a[href^="https://wa.me/"]:hover {
+  background: #064a2b;
+  color: #fff2a6;
+}
+
+/* Facebook: blue background with white text */
+.challenge-share-buttons a[href^="https://www.facebook.com/"] {
+  background: #0866cc;
+  color: #ffffff;
+  border-color: #438fea;
+}
+
+.challenge-share-buttons a[href^="https://www.facebook.com/"]:hover {
+  background: #064f9e;
+  color: #ffffff;
+}
+
+/* Visible keyboard focus for both sharing links */
+.challenge-share-buttons a.btn:focus-visible {
+  outline: 3px solid #ffe66d;
+  outline-offset: 4px;
+}
